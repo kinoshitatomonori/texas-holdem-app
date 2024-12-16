@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Texas Hold'em</title>
+    <link rel="stylesheet" href="bet_style.css">
+</head>
+<body>
+    <div class="container">
+        <h1></h1>
+        <div id="round-info">
+            <h2><span id="round-name">Pre-Flop</span></h2>
+        </div>
+        <div id="players">
+            <!-- プレイヤー情報がここに動的に追加されます -->
+        </div>
+        <div id="pot">
+            <h2>Current Pot: <span id="pot-amount">0</span> Chips</h2>
+        </div>
+        <div id="bet-controls">
+            <h3 id="current-turn">Current Turn: SB</h3>
+            <input type="number" id="bet-input" placeholder="Enter your bet">
+            <button id="place-bet">Place Bet</button>
+        </div>
+        <button id="next-round">Next Round</button>
+    </div>
+    <script src="bet_script.js"></script>
+</body>
+</html>
