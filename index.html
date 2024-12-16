@@ -260,7 +260,7 @@
     }
 
     document.getElementById('dealButton').addEventListener('click', () => {
-      const numPlayers = parseInt(prompt('Enter number of players (2-10):', '4'));
+      const numPlayers = parseInt(prompt('Enter number of players (2-10):', '2'));
       if (numPlayers >= 2 && numPlayers <= 10) {
         dealCards(numPlayers);
         renderPlayerHands();
