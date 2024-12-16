@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Texas Hold'em</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #2b2b2b;
+      color: white;
+    }
+
+    .table {
+      margin: 20px auto;
+      width: 80%;
+      max-width: 600px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .player {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin: 10px;
+      padding: 10px;
+      border: 1px solid white;
+      border-radius: 8px;
+      background-color: #444;
+    }
+
+    .card {
+      width: 60px;
+      height: 90px;
+      border-radius: 8px;
+      background-color: white;
+      color: black;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.3s;
+      border: 1px solid #ccc;
+    }
+
+    .card.hidden {
+      background-color: #555;
+      color: #555; /* Match background color to hide content */
+      border: 2px solid #222;
+    }
+
+    .card.hidden span {
+      visibility: hidden; /* Hide the text content when card is hidden */
+    }
+
+    .card.hidden::before {
+      content: "?";
+      color: white;
+      font-size: 32px;
+      position: absolute;
+    }
+
+    .card.heart {
+      color: red;
+    }
+
+    .card.diamond {
+      color: blue;
+    }
+
+    .card.club {
+      color: green;
+    }
+
+    .card.spade {
+      color: black;
+    }
+
+    .controls {
+      margin-top: 20px;
+    }
+
+    .button {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Texas Hold'em</h1>
+  <div class="table" id="playerHands"></div>
+  <div class="table" id="communityCards"></div>
+  <div class="controls">
+    <button class="button" id="dealButton">Deal Cards</button>
+    <button class="button" id="nextPhaseButton">Next Phase</button>
+    <button class="button" id="resetButton">Reset</button>
+  </div>
+
+  <script>
+    const suits = ['♥', '♦', '♣', '♠'];
+    const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    let deck = [];
+    let playerHands = [];
+    let communityCards = [];
+    let phase = 0; // 0: Pre-flop, 1: Flop, 2: Turn, 3: River
+
+    const playerHandsDiv = document.getElementById('playerHands');
+    const communityCardsDiv = document.getElementById('communityCards');
+    const nextPhaseButton = document.getElementById('nextPhaseButton');
+
+    function initializeDeck() {
+      deck = [];
+      for (const suit of suits) {
+        for (const rank of ranks) {
+          deck.push({ rank, suit });
+        }
+      }
+      deck = deck.sort(() => Math.random() - 0.5); // Shuffle the deck
+    }
+
+    function dealCards(numPlayers) {
+      initializeDeck();
+      playerHands = [];
+      communityCards = [];
+      phase = 0;
+      for (let i = 0; i < numPlayers; i++) {
+        playerHands.push([deck.pop(), deck.pop()]);
+      }
+    }
+
+    function renderPlayerHands() {
+      playerHandsDiv.innerHTML = '';
+      playerHands.forEach((hand, index) => {
+        const playerDiv = document.createElement('div');
+        playerDiv.classList.add('player');
+
+        const playerLabel = document.createElement('div');
+        playerLabel.textContent = `Player ${index + 1}`;
+        playerLabel.style.fontWeight = 'bold';
+        playerDiv.appendChild(playerLabel);
+
+        hand.forEach(card => {
+          const cardDiv = document.createElement('div');
+          cardDiv.classList.add('card', 'hidden');
+
+          const cardText = document.createElement('span');
+          cardText.textContent = `${card.rank}${card.suit}`;
+          cardDiv.appendChild(cardText);
+
+          cardDiv.addEventListener('click', () => cardDiv.classList.toggle('hidden'));
+
+          // Add suit-specific color
+          if (card.suit === '♥') cardDiv.classList.add('heart');
+          else if (card.suit === '♦') cardDiv.classList.add('diamond');
+          else if (card.suit === '♣') cardDiv.classList.add('club');
+          else if (card.suit === '♠') cardDiv.classList.add('spade');
+
+          playerDiv.appendChild(cardDiv);
+        });
+        playerHandsDiv.appendChild(playerDiv);
+      });
+    }
+
+    function renderCommunityCards() {
+      communityCardsDiv.innerHTML = '';
+      communityCards.forEach(card => {
+        const cardDiv = document.createElement('div');
+        cardDiv.classList.add('card');
+
+        const cardText = document.createElement('span');
+        cardText.textContent = `${card.rank}${card.suit}`;
+        cardDiv.appendChild(cardText);
+
+        // Add suit-specific color
+        if (card.suit === '♥') cardDiv.classList.add('heart');
+        else if (card.suit === '♦') cardDiv.classList.add('diamond');
+        else if (card.suit === '♣') cardDiv.classList.add('club');
+        else if (card.suit === '♠') cardDiv.classList.add('spade');
+
+        communityCardsDiv.appendChild(cardDiv);
+      });
+    }
+
+    function revealNextPhase() {
+      if (phase === 0) {
+        // Flop
+        communityCards.push(deck.pop(), deck.pop(), deck.pop());
+      } else if (phase === 1) {
+        // Turn
+        communityCards.push(deck.pop());
+      } else if (phase === 2) {
+        // River
+        communityCards.push(deck.pop());
+      }
+      phase++;
+      renderCommunityCards();
+      if (phase > 3) {
+        nextPhaseButton.disabled = true;
+      }
+    }
+
+    document.getElementById('dealButton').addEventListener('click', () => {
+      const numPlayers = parseInt(prompt('Enter number of players (2-10):', '2'));
+      if (numPlayers >= 2 && numPlayers <= 10) {
+        dealCards(numPlayers);
+        renderPlayerHands();
+        renderCommunityCards();
+        nextPhaseButton.disabled = false;
+      } else {
+        alert('Please enter a valid number of players (2-10).');
+      }
+    });
+
+    document.getElementById('nextPhaseButton').addEventListener('click', revealNextPhase);
+
+    document.getElementById('resetButton').addEventListener('click', () => {
+      playerHands = [];
+      communityCards = [];
+      phase = 0;
+      playerHandsDiv.innerHTML = '';
+      communityCardsDiv.innerHTML = '';
+      nextPhaseButton.disabled = true;
+    });
+  </script>
+</body>
+</html>
