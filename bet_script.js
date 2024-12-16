@@ -1,7 +1,7 @@
 // プレイヤーのデータを管理
 const players = [
     { id: 1, name: "Player 1", stack: 1000, position: "BTN", bet: 0 },
-    { id: 2, name: "Player 2", stack: 1000, position: "SB", bet: 0 },
+    { id: 2, name: "Player 2", stack: 1000, position: "BB", bet: 0 },
 ];
 
 let currentPot = 0;
