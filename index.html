@@ -124,6 +124,29 @@
     const communityCardsDiv = document.getElementById('communityCards');
     const nextPhaseButton = document.getElementById('nextPhaseButton');
 
+    function advancedShuffle(deck) {
+      // Fisher-Yates Shuffle
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+
+      // Additional random block swaps
+      for (let k = 0; k < 3; k++) { // Repeat block swaps multiple times
+        const blockSize = Math.floor(deck.length / 4); // Divide deck into 4 parts
+        const start1 = Math.floor(Math.random() * (deck.length - blockSize));
+        const start2 = Math.floor(Math.random() * (deck.length - blockSize));
+
+        for (let i = 0; i < blockSize; i++) {
+          const idx1 = (start1 + i) % deck.length;
+          const idx2 = (start2 + i) % deck.length;
+          [deck[idx1], deck[idx2]] = [deck[idx2], deck[idx1]];
+        }
+      }
+
+      return deck;
+    }
+
     function initializeDeck() {
       deck = [];
       for (const suit of suits) {
@@ -132,15 +155,28 @@
         }
       }
 
-      // First shuffle
-      deck = deck.sort(() => Math.random() - 0.5);
-
-      // Fisher-Yates Shuffle for additional randomness
-      for (let i = deck.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [deck[i], deck[j]] = [deck[j], deck[i]];
-      }
+      // Use the advanced shuffle method
+      deck = advancedShuffle(deck);
     }
+
+
+    //function initializeDeck() {
+    //  deck = [];
+    //  for (const suit of suits) {
+    //    for (const rank of ranks) {
+    //      deck.push({ rank, suit });
+    //    }
+    //  }
+    //
+    //  // First shuffle
+    //  deck = deck.sort(() => Math.random() - 0.5);
+    //
+    //  // Fisher-Yates Shuffle for additional randomness
+    //  for (let i = deck.length - 1; i > 0; i--) {
+    //    const j = Math.floor(Math.random() * (i + 1));
+    //    [deck[i], deck[j]] = [deck[j], deck[i]];
+    //  }
+    //}
 
     function dealCards(numPlayers) {
       initializeDeck();
